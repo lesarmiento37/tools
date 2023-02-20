@@ -1,0 +1,7 @@
+  SplitChecks:
+    module: src/split_checks
+    handler: handler.main
+    vendor: ./src/commons
+    role: iamRoleLambdaSplitChecks
+    environment:
+      REGION: virginia

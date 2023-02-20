@@ -1,0 +1,18 @@
+{
+  "name": "split-checks",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Leonardo Sarmiento",
+  "license": "ISC",
+  "dependencies": {
+    "serverless": "^2.72.2",
+    "serverless-dotenv-plugin": "^3.12.0",
+    "serverless-plugin-log-retention": "^4.0.0",
+    "serverless-plugin-split-stacks": "^20.11.2",
+    "serverless-prune-plugin": "^1.625.1",
+    "serverless-python-requirements": "^45.1.1"
+  },
+  "devDependencies": {
+    "serverless-step-functions": "^33.88.0"
+  }
+}

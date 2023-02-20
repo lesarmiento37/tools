@@ -1,0 +1,37 @@
+splitChecksEventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+        Name: "splitChecksEventBus"
+
+splitChecksEventArchive:
+  Type: AWS::Events::Archive
+  Properties:
+    ArchiveName: "splitChecksEventArchive"
+    RetentionDays: 10
+    SourceArn: !GetAtt splitChecksEventBus.Arn
+
+PushTosplitChecks:
+  Type: AWS::Events::Rule
+  Properties:
+    EventBusName: splitChecksEventBus
+    EventPattern:
+      source:
+        - "checks_id"
+      detail-type:
+        - "number_checks"
+        - "number_order"
+    Name: splitChecksRule
+    State: ENABLED
+    Targets:
+      - Arn: {"Ref": "splitChecks"}
+        Id: "idsplitChecksRulesplitChecks"
+        RoleArn:
+          Fn::GetAtt: [ "iamsplitChecksRulesplitChecksExecution", "Arn" ]
+        RetryPolicy:
+          MaximumRetryAttempts: 5
+          MaximumEventAgeInSeconds: 60
+        DeadLetterConfig:
+          Arn:
+            Fn::GetAtt:
+              - "splitChecksDLQ"
+              - "Arn"

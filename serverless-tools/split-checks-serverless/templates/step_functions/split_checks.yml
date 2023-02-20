@@ -1,0 +1,20 @@
+name: SplitChecks
+role:
+  Fn::GetAtt: [ "iamRoleStateMachineSplitChecksExecution", "Arn" ]
+definition:
+  Comment: "A state pull the file to process"
+  StartAt: SplitChecks
+  States:
+    SplitChecks:
+      Type: Task
+      Resource:
+        Fn::GetAtt: [ SplitChecksLambdaFunction, Arn ]
+      Catch:
+        - ErrorEquals: [ "States.ALL" ]
+          Next: NotifierErrorFallback
+      End: true        
+    NotifierErrorFallback:
+      Type: Task
+      Resource:
+        Fn::GetAtt: [ SplitChecksErrorLambdaFunction, Arn ]      
+      End: true

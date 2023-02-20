@@ -1,0 +1,73 @@
+service: split-checks
+useDotenv: true
+
+frameworkVersion: '2'
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-python-requirements
+  - serverless-plugin-log-retention
+  - serverless-prune-plugin
+  - serverless-step-functions
+  - serverless-plugin-split-stacks
+custom:
+  splitStacks:
+    nestedStackCount: 2 # Controls the number of created nested stacks
+    perFunction: false
+    perType: false
+    perGroupFunction: true
+  environments:
+    develop: 'Develop'
+  businessImpact:
+    develop: 'Testing'
+  prune:
+    automatic: true
+    includeLayers: true
+    number: ${env:PRUNE_NUMBER}
+  serviceTags:
+    Managed-by: 'serverless-framework'
+    Team: 'DevOps'
+    Country: 'ALL'
+    IaC-Repository: 'split-checks'
+    BackupScheme: 'NA'
+  dotenv:
+    include: none
+  pythonRequirements:
+    dockerizePip: true
+    useStaticCache: false
+    usePoetry: false
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: 'us-east-1'
+  stackName: ${self:service}
+  memorySize: 512
+  timeout: 900
+  logRetentionInDays: ${env:LOGS_RETENTION_DAYS}
+  stackTags: ${self:custom.serviceTags}  
+
+resources:
+  Resources:
+    #Lambdas Roles
+    iamRoleLambdaSplitChecks: ${file(templates/iam/lambdas/iam_lambda_split_checks.yml):iamRoleLambdaSplitChecks}
+    iamRoleLambdaSplitChecksError: ${file(templates/iam/lambdas/iam_lambda_split_checks_error.yml):iamRoleLambdaSplitChecksError}
+    #Step Functions Roles Templates
+    iamRoleStateMachineSplitChecksExecution: ${file(templates/iam/step_functions/iam_state_machine_split_checks.yml):iamRoleStateMachineSplitChecksExecution}
+    #Rule Roles eventbridge
+    iamRuleAWSSplitChecks: ${file(templates/iam/iam_rule_aws_cost_saving.yml):iamRuleAWSSplitChecks}
+    #Rules templates
+    AWSSplitChecksRule: ${file(templates/eventbridge/rules_checks.yml):AWSSplitChecksRule
+
+#Lambdas templates
+functions:
+  - ${file(templates/functions/split_checks_error.yml)}
+  - ${file(templates/functions/split_checks.yml)}
+
+#Step Functions templates
+stepFunctions:
+  stateMachines:
+    SplitChecks: 
+      ${file(templates/step_functions/split_checks.yml)}

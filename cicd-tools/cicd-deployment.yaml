@@ -1,0 +1,101 @@
+EksDeployments:
+  Type: 'AWS::CodeBuild::Project'
+  Properties:
+    Artifacts:
+      Type: NO_ARTIFACTS
+    Name: split-checks-deployment
+    Description: Deploy Automation
+    ServiceRole: >-
+      arn:aws:iam::12345678910:role/service-role/codebuild-service-role
+    Source:
+      Type: BITBUCKET
+      Location: 'https://my-repo.leonardo.git'
+      BuildSpec: !Sub |
+        version: 0.2
+        phases:
+          install:
+            runtime-versions:
+              java: corretto11
+              docker: 19
+            commands:
+              - su -
+              - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2& 
+              - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
+              - echo Installing app dependencies...
+              - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/kubectl   
+              - chmod +x ./kubectl
+              - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+              - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+              - source ~/.bashrc
+              - yum install bc -y
+              - java -version
+              - uname -a
+          pre_build:
+            commands:
+              - aws configure set aws_access_key_id $aws_access_key_idf
+              - aws configure set aws_secret_access_key $aws_secret_access_keyf
+              - aws configure set region $regionf
+              - echo Entered the pre_build phase...
+              - echo Logging in to Amazon EKS...
+              - aws eks --region us-east-1 update-kubeconfig --name $eksnamef
+              - docker login --username $userd -p $dockerp
+          build:
+            commands:
+              - echo Entered the build phase...
+              - echo Change directory to secondary source
+              - kubectl config set-context --current --namespace=develop
+              - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 12345678910.dkr.ecr.us-east-1.amazonaws.com
+              - echo List directory
+          post_build:
+            commands:
+              - cd leonardo-split-checks
+              - NEW_VERSION=$(git log --format="%h" -n 1)-$(date '+%d%H%M%S')
+              - echo "New Version $NEW_VERSION"
+              - docker build -t 12345678910.dkr.ecr.us-east-1.amazonaws.com/product-service:v$NEW_VERSION .
+              - docker push 12345678910.dkr.ecr.us-east-1.amazonaws.com/product-service:v$NEW_VERSION
+              - kubectl -n develop --record deployment.apps/product-service set image deployment.v1.apps/product-service product-service=12345678910.dkr.ecr.us-east-1.amazonaws.com/product-service:v$NEW_VERSION
+              - kubectl get pods
+    Environment:
+      Type: LINUX_CONTAINER
+      Image: 'aws/codebuild/amazonlinux2-x86_64-standard:3.0'
+      PrivilegedMode: true
+      ComputeType: BUILD_GENERAL1_LARGE
+      EnvironmentVariables:
+        - Name: regionf
+          Type: SECRETS_MANAGER
+          Value: regiona
+        - Name: aws_access_key_idf
+          Type: SECRETS_MANAGER
+          Value: aku
+        - Name: aws_secret_access_keyf
+          Type: SECRETS_MANAGER
+          Value: akp
+        - Name: dockerp
+          Type: SECRETS_MANAGER
+          Value: dtoken
+        - Name: userd
+          Type: SECRETS_MANAGER
+          Value: duser
+        - Name: eksnamef
+          Type: SECRETS_MANAGER
+          Value: eksname
+    SourceVersion: develop
+    Triggers:
+      Webhook: true
+      FilterGroups:
+        - - Type: EVENT
+            Pattern: PUSH
+            ExcludeMatchedPattern: false
+          - Type: COMMIT_MESSAGE
+            Pattern: deploy-develop
+            ExcludeMatchedPattern: false
+          - Type: HEAD_REF
+            Pattern: develop
+            ExcludeMatchedPattern: false
+    VpcConfig:
+      SecurityGroupIds:
+        - sg-12334564654
+      Subnets:
+        - subnet-4d42dd24d35d435d4 
+        - subnet-dddd4d354d358d47d
+      VpcId: vpc-d534d3d4d34d

@@ -1,0 +1,7 @@
+  SplitChecksError:
+    module: src/split_checks_error
+    handler: handler.main
+    vendor: ./src/commons
+    role: iamRoleLambdaSplitChecksError
+    environment:
+      REGION: virginia

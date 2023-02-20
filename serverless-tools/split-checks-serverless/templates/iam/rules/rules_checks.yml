@@ -1,0 +1,20 @@
+AWSSplitChecksRule:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    RoleName: "iamRuleSplitChecksExecution"
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: "events.amazonaws.com"
+          Action: 'sts:AssumeRole'
+    Policies:
+      - PolicyName: inline_policy_rule_split_checks
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'states:StartExecution'
+              Resource: {"Ref": "SplitChecks"}

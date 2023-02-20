@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: diners-backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-diners-core
+  template:
+    metadata:
+      labels:
+        app: backend-diners-core
+    spec:
+      containers:
+        - name: backend-diners-container
+          image: elabs/backend-diners-container:latest
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-diners-service
+  labels:
+    app: backend-diners-service
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+  selector:
+    app: backend-diners-service
