@@ -18,3 +18,7 @@ data "aws_iam_policy_document" "eksKubernetesTest_assume_role_policy" {
     }
   }
 }
+
+data "" "name" {
+  
+}
