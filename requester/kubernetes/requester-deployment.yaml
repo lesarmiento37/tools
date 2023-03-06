@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: requester
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: requester
+  template:
+    metadata:
+      labels:
+        app: requester
+    spec:
+      containers:
+      - name: requester-container
+        image: leonardos37/requester:v1
+        env:
+          - name: API_KEY
+            value: "2f5ae96c-b558-4c7b-a590-a501ae1c3f6c"
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
