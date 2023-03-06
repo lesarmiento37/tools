@@ -1,7 +1,7 @@
 # call API
 import requests
 
-url = "http://localhost/devops"
+url = "http://192.168.49.2:30007/devops"
 
 payload = {
     "message": "This is a test",
