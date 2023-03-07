@@ -35,4 +35,4 @@ cd ..
 kubectl -n default --record deployment.apps/requester set image deployment.v1.apps/requester requester=lesarmiento37/requester:v$NEW_VERSION
 #################### FINAL STAGE #######################
 sleep 2
-python3.8 test2.py
+python3.8 test.py

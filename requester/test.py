@@ -1,7 +1,7 @@
 import requests
 
 # Define the POST request data
-data = {"message": "This is a test","to": "Leonardo Sarmiento Alcala","from": "Rita Asturia","timeToLifeSec": 45}
+data = {"message": "This is a test","to": "RUby Alvarez","from": "Rita Asturia","timeToLifeSec": 45}
 
 # Define the headers
 headers = {
