@@ -13,11 +13,13 @@ spec:
         app: requester
     spec:
       containers:
-      - name: requester-container
-        image: leonardos37/requester:v1
+      - name: requester
+        image: leonardos37/requester:v2
         env:
           - name: API_KEY
             value: "2f5ae96c-b558-4c7b-a590-a501ae1c3f6c"
+          - name: SECRET_KEY
+            value: "rr4ToT3P92gVSomO"
         resources:
           limits:
             memory: "512Mi"

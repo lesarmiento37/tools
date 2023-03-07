@@ -20,7 +20,7 @@ spec:
           - name: sonar.jdbc.username
             value: leonardo
           - name: sonar.jdbc.url
-            value: "jdbc:postgresql://10.244.0.104:5432/sonar"
+            value: "jdbc:postgresql://10.244.0.130:5432/sonar"
           - name: sonar.jdbc.password
             value: 2f5ae96c
           - name: TZ
