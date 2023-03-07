@@ -36,6 +36,7 @@ In this stage the process build a docker image with the existing code in the dir
 
 ### TEST STAGE
 In this stage the process test the python function using pytest, there are two tests
+
 ![image](https://user-images.githubusercontent.com/17441125/223328561-2837eefd-4e88-48e6-9758-5d2bfe026fe2.png)
 
 ### CODE ANALYSIS STAGE
@@ -45,6 +46,7 @@ With the provisioned sonarqube server inside the same cluster, it is possible in
 
 ### DEPLOY STAGE
 In this stage of the pipeline, the image is updated in the kubernetes requester deployment
+
 ![image](https://user-images.githubusercontent.com/17441125/223329264-22f06d4b-33eb-45e1-8c30-12708174201a.png)
 
 ### FINAL STAGE
@@ -60,6 +62,7 @@ With the input event:
 data = {"message": "This is a test","to": "Leonardo Sarmiento Alcala","from": "Rita Asturia","timeToLifeSec": 45}
 ```
 The application shows the next result:
+
 ![image](https://user-images.githubusercontent.com/17441125/223329604-9626aba4-7ab7-4f25-b300-4c9e4f693532.png)
 ### DIFFERENT EVENT AND HEADERS
 
@@ -68,6 +71,7 @@ With the input event:
 data = {"message": "This is a test","to": "Ruby Alvarez","from": "Rita Asturia","timeToLifeSec": 45}
 ```
 The application shows the next result:
+
 ![image](https://user-images.githubusercontent.com/17441125/223330325-ec304013-8630-4f3b-9873-f13bf0f192a5.png)
 
 ### INCORRECT X-Parse-REST-API-Key
